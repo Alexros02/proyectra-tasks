@@ -12,12 +12,13 @@ const navItems: Array<{ href: string; label: string }> = [
 ];
 
 interface HeaderProps {
-  onLoginClick: () => void;
+  onLoginClick?: () => void;
 }
 
 export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { user, logout } = useAuth();
+  const { user, logout, login } = useAuth();
+  const handleLoginClick = onLoginClick ?? login;
 
   const handleToggleMenu = (): void => {
     setIsOpen(prev => !prev);
@@ -53,7 +54,10 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
           </div>
 
           {/* Navegación central - Posicionamiento absoluto para que no se mueva */}
-          <nav className="hidden lg:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2" aria-label="Navegación principal">
+          <nav
+            className="hidden lg:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2"
+            aria-label="Navegación principal"
+          >
             <div className="flex items-center gap-8">
               {navItems.map(item => (
                 <Link
@@ -80,9 +84,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {user.displayName || 'Usuario'}
                     </span>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      En línea
-                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">En línea</span>
                   </div>
                 </div>
                 <button
@@ -95,7 +97,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
               </div>
             ) : (
               <button
-                onClick={onLoginClick}
+                onClick={handleLoginClick}
                 className="flex items-center gap-2 text-sm bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
               >
                 <LogIn className="w-4 h-4" />
@@ -139,10 +141,10 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
                   </Link>
                 ))}
               </div>
-              
+
               {/* Separador */}
               <div className="border-t border-gray-200 dark:border-gray-700 my-4"></div>
-              
+
               {/* Área de usuario móvil */}
               <div className="space-y-3">
                 {user ? (
@@ -155,9 +157,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {user.displayName || 'Usuario'}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          En línea
-                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">En línea</p>
                       </div>
                     </div>
                     <button
@@ -170,7 +170,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
                   </div>
                 ) : (
                   <button
-                    onClick={onLoginClick}
+                    onClick={handleLoginClick}
                     className="w-full flex items-center justify-center gap-2 text-sm bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-3 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium shadow-sm hover:shadow-md"
                   >
                     <LogIn className="w-4 h-4" />
