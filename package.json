@@ -6,22 +6,30 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy:worker": "wrangler deploy",
+    "dev:worker": "wrangler dev",
+    "db:migrate": "wrangler d1 migrations apply proyectra_db",
+    "db:migrate:create": "wrangler d1 migrations create proyectra_db"
   },
   "dependencies": {
+    "firebase": "^12.3.0",
+    "lucide-react": "^0.544.0",
+    "next": "15.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.4"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@cloudflare/workers-types": "^4.20250927.0",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "wrangler": "^4.40.2"
   }
 }
