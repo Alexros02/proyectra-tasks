@@ -58,7 +58,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
             className="hidden lg:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2"
             aria-label="Navegación principal"
           >
-            <div className="flex items-center gap-8">
+            {/* <div className="flex items-center gap-8">
               {navItems.map(item => (
                 <Link
                   key={item.href}
@@ -69,7 +69,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
                   {item.label}
                 </Link>
               ))}
-            </div>
+            </div> */}
           </nav>
 
           {/* Área de usuario - Solo visible en desktop */}
