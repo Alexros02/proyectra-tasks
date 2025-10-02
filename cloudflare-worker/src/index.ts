@@ -78,21 +78,143 @@ const worker = {
       return json({ ok: true }, { status: 200 }, origin, env);
     }
 
-    /*
-     * CRUD de tareas deshabilitado temporalmente
-     *
-     * // Tasks collection
-     * if (url.pathname === '/api/tasks' && method === 'GET') { ... }
-     * if (url.pathname === '/api/tasks' && method === 'POST') { ... }
-     *
-     * // Task by id
-     * const taskIdMatch = url.pathname.match(/^\/api\/tasks\/(.+)$/);
-     * if (taskIdMatch) {
-     *   if (method === 'GET') { ... }
-     *   if (method === 'PUT') { ... }
-     *   if (method === 'DELETE') { ... }
-     * }
-     */
+    // Tasks collection
+    if (url.pathname === '/api/tasks' && method === 'GET') {
+      // Filtros básicos por cliente y estado
+      const clientId = url.searchParams.get('clientId');
+      const status = url.searchParams.get('status');
+      const limit = Math.max(0, Math.min(Number(url.searchParams.get('limit') ?? 20), 100));
+      const offset = Math.max(0, Number(url.searchParams.get('offset') ?? 0));
+
+      try {
+        let base =
+          'SELECT id, client_id, title, description, status, category_id, price_cents, due_date, created_at, updated_at FROM tasks';
+        const where: string[] = [];
+        const binds: unknown[] = [];
+        if (clientId) {
+          where.push('client_id = ?');
+          binds.push(clientId);
+        }
+        if (status) {
+          where.push('status = ?');
+          binds.push(status);
+        }
+        if (where.length) base += ' WHERE ' + where.join(' AND ');
+        base += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
+        binds.push(limit, offset);
+        const { results } = await env.DB.prepare(base)
+          .bind(...binds)
+          .all();
+        return json({ data: results }, { status: 200 }, origin, env);
+      } catch (e) {
+        return serverError('DB error fetching tasks', origin, env);
+      }
+    }
+
+    if (url.pathname === '/api/tasks' && method === 'POST') {
+      type CreateTaskBody = {
+        id?: string;
+        clientId?: string;
+        title?: string;
+        description?: string;
+        categoryId?: string | null;
+      };
+      const body = await readBody<CreateTaskBody>(request);
+      if (!body || !body.clientId || !body.title || !body.description) {
+        return badRequest('clientId, title y description son requeridos', origin, env);
+      }
+      const id = crypto.randomUUID();
+      const nowStatus = 'en_revision';
+      try {
+        await env.DB.prepare(
+          'INSERT INTO tasks (id, client_id, title, description, status, category_id, created_at) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)'
+        )
+          .bind(
+            id,
+            body.clientId.trim(),
+            body.title.trim(),
+            body.description.trim(),
+            nowStatus,
+            body.categoryId ?? null
+          )
+          .run();
+        const task = await env.DB.prepare(
+          'SELECT id, client_id, title, description, status, category_id, price_cents, due_date, created_at, updated_at FROM tasks WHERE id = ?'
+        )
+          .bind(id)
+          .first();
+        return json({ data: task }, { status: 201 }, origin, env);
+      } catch (e) {
+        // Log para diagnóstico en dev
+        console.error('DB error creating task', e);
+        return serverError('DB error creating task', origin, env);
+      }
+    }
+
+    // Task by id
+    const taskIdMatch = url.pathname.match(/^\/api\/tasks\/([^/]+)$/);
+    if (taskIdMatch) {
+      const taskId = taskIdMatch[1];
+      if (method === 'GET') {
+        try {
+          const task = await env.DB.prepare(
+            'SELECT id, client_id, title, description, status, category_id, price_cents, due_date, created_at, updated_at FROM tasks WHERE id = ?'
+          )
+            .bind(taskId)
+            .first();
+          if (!task) return notFound(origin, env);
+          return json({ data: task }, { status: 200 }, origin, env);
+        } catch (e) {
+          console.error('DB error fetching task', e);
+          return serverError('DB error fetching task', origin, env);
+        }
+      }
+
+      if (method === 'DELETE') {
+        try {
+          const existing = await env.DB.prepare('SELECT id FROM tasks WHERE id = ?')
+            .bind(taskId)
+            .first<{ id: string }>();
+          if (!existing) return notFound(origin, env);
+
+          await env.DB.prepare('DELETE FROM tasks WHERE id = ?').bind(taskId).run();
+
+          return noContent(origin, env);
+        } catch (e) {
+          console.error('DB error deleting task', e);
+          return serverError('DB error deleting task', origin, env);
+        }
+      }
+    }
+
+    // Accept proposal: POST /api/tasks/:id/accept
+    const acceptMatch = url.pathname.match(/^\/api\/tasks\/([^/]+)\/accept$/);
+    if (acceptMatch && method === 'POST') {
+      const id = acceptMatch[1];
+      try {
+        const current = await env.DB.prepare('SELECT status FROM tasks WHERE id = ?')
+          .bind(id)
+          .first<{ status: string }>();
+        if (!current) return notFound(origin, env);
+        if (current.status !== 'pendiente') {
+          return badRequest('La tarea no está en estado pendiente', origin, env);
+        }
+        await env.DB.prepare(
+          'UPDATE tasks SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+        )
+          .bind('aceptada', id)
+          .run();
+        const task = await env.DB.prepare(
+          'SELECT id, client_id, title, description, status, category_id, price_cents, due_date, created_at, updated_at FROM tasks WHERE id = ?'
+        )
+          .bind(id)
+          .first();
+        return json({ data: task }, { status: 200 }, origin, env);
+      } catch (e) {
+        console.error('DB error accepting task', e);
+        return serverError('DB error accepting task', origin, env);
+      }
+    }
 
     // Users endpoints
     if (url.pathname === '/api/users' && method === 'POST') {

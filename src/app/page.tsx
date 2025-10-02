@@ -1,3 +1,8 @@
+'use client';
+
+import Link from 'next/link';
+import { ArrowRight, Info, Upload, ShieldCheck, Bot } from 'lucide-react';
+
 export default function Home() {
   return (
     <>
@@ -32,30 +37,32 @@ export default function Home() {
                 href="#crear-tarea"
                 aria-label="Crear una tarea"
                 tabIndex={0}
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:brightness-110 active:brightness-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-background transition"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:brightness-110 active:brightness-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-background transition"
               >
-                Comenzar gratis →
+                Comenzar gratis
+                <ArrowRight className="h-4 w-4" aria-hidden />
               </a>
               <a
                 href="#funcionalidades"
                 aria-label="Ver funcionalidades"
                 tabIndex={0}
-                className="inline-flex items-center justify-center rounded-xl border border-gray-300/70 dark:border-gray-700/70 bg-white/70 dark:bg-white/5 px-6 py-3 text-sm font-semibold text-gray-900 dark:text-gray-100 hover:bg-white/90 dark:hover:bg-white/10 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-background transition"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300/70 dark:border-gray-700/70 bg-white/70 dark:bg-white/5 px-6 py-3 text-sm font-semibold text-gray-900 dark:text-gray-100 hover:bg-white/90 dark:hover:bg-white/10 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-background transition"
               >
+                <Info className="h-4 w-4" aria-hidden />
                 Ver funcionalidades
               </a>
             </div>
             <div className="mt-4 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="inline-flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" aria-hidden />
                 Sin tarjeta
               </span>
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-blue-500"></span>
+              <span className="inline-flex items-center gap-1.5">
+                <Upload className="h-3.5 w-3.5 text-blue-600" aria-hidden />
                 Subida de archivos
               </span>
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-violet-500"></span>
+              <span className="inline-flex items-center gap-1.5">
+                <Bot className="h-3.5 w-3.5 text-violet-600" aria-hidden />
                 Chat seguro
               </span>
             </div>
@@ -68,9 +75,6 @@ export default function Home() {
             <div className="relative aspect-[16/10] w-full rounded-2xl border border-white/20 dark:border-white/10 bg-white/60 dark:bg-white/5 p-4 shadow-2xl backdrop-blur">
               <div className="h-full w-full rounded-xl bg-gradient-to-br from-white to-gray-50 dark:from-white/10 dark:to-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center text-center">
                 <div className="px-4">
-                  <p className="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400">
-                    Vista previa
-                  </p>
                   <p className="mt-3 text-2xl sm:text-3xl font-semibold text-gray-900 dark:text-white">
                     Crea, negocia y cobra en un solo lugar
                   </p>
@@ -206,22 +210,15 @@ export default function Home() {
         </ol>
 
         <div className="mt-10 flex flex-col sm:flex-row gap-3">
-          <a
+          <Link
             href="/tasks"
             aria-label="Ir a tareas"
             tabIndex={0}
-            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:brightness-110 active:brightness-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-background transition"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 hover:brightness-110 active:brightness-95 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-background transition"
           >
-            Crear mi primera tarea →
-          </a>
-          <a
-            href="#"
-            aria-label="Contactar soporte"
-            tabIndex={0}
-            className="inline-flex items-center justify-center rounded-xl border border-gray-300/70 dark:border-gray-700/70 bg-white/70 dark:bg-white/5 px-6 py-3 text-sm font-semibold text-gray-900 dark:text-gray-100 hover:bg-white/90 dark:hover:bg-white/10 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-background transition"
-          >
-            Hablar con soporte
-          </a>
+            Crear mi primera tarea
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
         </div>
       </div>
 

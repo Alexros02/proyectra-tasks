@@ -1,102 +1,56 @@
-// Tipos para usuarios del sistema
-export type UserRole = 'admin' | 'user';
+// Tipos base (frontend)
+export type UserRole = 'client' | 'admin';
 
-export interface BaseUser {
-  nombre: string;
-  email: string;
-  rol: UserRole;
-}
-
-export interface Admin extends BaseUser {
-  rol: 'admin';
-}
-
-export interface User extends BaseUser {
-  rol: 'user';
-}
-
-// Tipo unión para manejar ambos tipos de usuario
-export type UserType = Admin | User;
-
-// Tipo para crear un nuevo usuario (sin ID)
-export interface CreateUser {
-  nombre: string;
-  email: string;
-  rol: UserRole;
-}
-
-// Tipo para actualizar un usuario existente (todas las propiedades opcionales)
-export interface UpdateUser {
-  nombre?: string;
-  email?: string;
-  rol?: UserRole;
-}
-
-// Tipos para tareas del sistema
-export type TaskStatus = 'pendiente' |'en_revision'| 'en_progreso' | 'completada' | 'cancelada';
-
-export interface TaskFile {
+export interface UserMinimal {
   id: string;
-  nombre: string;
-  url: string;
-  tipo: string;
-  tamaño: number;
+  role: UserRole;
+  created_at?: string;
+  updated_at?: string | null;
 }
+
+// Estados de tareas alineados con el backend
+export type TaskStatus =
+  | 'en_revision'
+  | 'pendiente'
+  | 'aceptada'
+  | 'en_curso'
+  | 'finalizada'
+  | 'rechazada';
 
 export interface Task {
   id: string;
-  clienteId: string;
-  título: string;
-  descripción: string;
-  estado: TaskStatus;
-  precio: number;
-  fechaEntrega: Date;
-  archivos: TaskFile[];
-  fechaCreación: Date;
+  client_id: string;
+  title: string;
+  description: string;
+  status: TaskStatus;
+  category_id?: string | null;
+  price_cents?: number | null;
+  due_date?: string | null; // ISO date string
+  created_at: string;
+  updated_at?: string | null;
 }
 
-// Tipo para crear una nueva tarea (sin ID ni fechas automáticas)
-export interface CreateTask {
-  clienteId: string;
-  título: string;
-  descripción: string;
-  estado: TaskStatus;
-  precio: number;
-  fechaEntrega: Date;
-  archivos?: TaskFile[];
+export interface CreateTaskDTO {
+  clientId: string;
+  title: string;
+  description: string;
+  categoryId?: string | null;
 }
 
-// Tipo para actualizar una tarea existente (todas las propiedades opcionales)
-export interface UpdateTask {
-  clienteId?: string;
-  título?: string;
-  descripción?: string;
-  estado?: TaskStatus;
-  precio?: number;
-  fechaEntrega?: Date;
-  archivos?: TaskFile[];
+export interface TasksListResponse {
+  data: Task[];
+  total?: number;
 }
 
-// Tipos para comentarios del sistema
-export interface Comment {
+export interface TaskResponse {
+  data: Task;
+}
+
+// Mensajes/comentarios (placeholder para futura implementación de chat)
+export interface Message {
   id: string;
-  tareaId: string;
-  usuarioId: string;
-  texto: string;
-  archivos: TaskFile[];
-  fecha: Date;
-}
-
-// Tipo para crear un nuevo comentario (sin ID ni fecha automática)
-export interface CreateComment {
-  tareaId: string;
-  usuarioId: string;
-  texto: string;
-  archivos?: TaskFile[];
-}
-
-// Tipo para actualizar un comentario existente (todas las propiedades opcionales)
-export interface UpdateComment {
-  texto?: string;
-  archivos?: TaskFile[];
+  task_id: string;
+  user_id: string;
+  text: string;
+  created_at: string;
 }

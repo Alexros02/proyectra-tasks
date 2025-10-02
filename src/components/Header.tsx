@@ -18,6 +18,10 @@ interface HeaderProps {
 export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { user, logout, login } = useAuth();
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = '/';
+  };
   const handleLoginClick = onLoginClick ?? login;
 
   const handleToggleMenu = (): void => {
@@ -72,8 +76,18 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
             </div> */}
           </nav>
 
-          {/* Área de usuario - Solo visible en desktop */}
-          <div className="hidden lg:flex items-center justify-end ml-auto">
+          {/* Acciones derechas (desktop) */}
+          <div className="hidden lg:flex items-center justify-end ml-auto gap-3">
+            {user && (
+              <Link
+                href="/tasks"
+                aria-label="Ir al panel de tareas"
+                tabIndex={0}
+                className="rounded-lg border border-blue-300/70 dark:border-blue-700/70 bg-blue-50/80 dark:bg-blue-400/10 px-4 py-2 text-sm font-medium text-blue-700 dark:text-blue-200 hover:bg-blue-100/80 dark:hover:bg-blue-400/20 transition"
+              >
+                Panel de tareas
+              </Link>
+            )}
             {user ? (
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-3">
@@ -88,7 +102,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
                   </div>
                 </div>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   <LogOut className="w-4 h-4" />
@@ -149,6 +163,14 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
               <div className="space-y-3">
                 {user ? (
                   <div className="space-y-3">
+                    <Link
+                      href="/tasks"
+                      className="block rounded-lg px-4 py-3 text-sm font-medium text-blue-700 dark:text-blue-200 bg-blue-50/80 dark:bg-blue-400/10 border border-blue-300/70 dark:border-blue-700/70 hover:bg-blue-100/80 dark:hover:bg-blue-400/20 transition-colors duration-200"
+                      aria-label="Ir al panel de tareas"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Panel de tareas
+                    </Link>
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-white" />
@@ -161,7 +183,7 @@ export const Header = ({ onLoginClick }: HeaderProps): React.JSX.Element => {
                       </div>
                     </div>
                     <button
-                      onClick={logout}
+                      onClick={handleLogout}
                       className="w-full flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
                     >
                       <LogOut className="w-4 h-4" />
